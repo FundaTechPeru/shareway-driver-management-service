@@ -91,6 +91,8 @@ All business endpoints live under `/api/v1`. Protected endpoints expect `Authori
 | GET | `/api/v1/drivers/me/vehicles` | DRIVER | List my vehicles |
 | GET | `/api/v1/drivers/me/vehicles/{id}` | DRIVER | One of my vehicles (`404` if not mine) |
 | PUT | `/api/v1/drivers/me/vehicles/{id}` | DRIVER | Update one of my vehicles (`404` if not mine, `409` plate taken) |
+| PUT | `/api/v1/drivers/me/availability` | DRIVER | Replace my weekly availability |
+| GET | `/api/v1/drivers/me/availability` | DRIVER | My weekly availability, ordered by day and start time |
 
 ### Driver verification
 
@@ -106,6 +108,17 @@ the driver uploads a new one instead. Events are published through Spring applic
 
 Body: `{plate, brand, model, year, color, seats}`. The plate has 6 letters or digits with an optional hyphen and is stored
 in the canonical form `ABC-123` (so `abc123` and `ABC-123` are the same plate). `year` goes from 2000 to next year and `seats` from 1 to 8.
+
+### Availability
+
+`PUT` replaces the whole weekly schedule (an empty list clears it):
+
+```json
+{ "slots": [ { "dayOfWeek": "MONDAY", "startTime": "07:00", "endTime": "09:00" } ] }
+```
+
+Times use `HH:mm`. Each slot needs `startTime` before `endTime`, and slots on the same day must not overlap
+(adjacent slots such as 07:00-09:00 and 09:00-11:00 are fine). Violations return `400`.
 
 ### Administrators
 
