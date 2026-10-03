@@ -20,4 +20,13 @@ public class UserProfileService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
+
+    @Transactional(readOnly = true)
+    public User getDriverProfile(Long userId) {
+        User user = getProfile(userId);
+        if (!user.isDriver()) {
+            throw new ResourceNotFoundException("Driver profile not found");
+        }
+        return user;
+    }
 }
