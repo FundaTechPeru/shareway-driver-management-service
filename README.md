@@ -77,6 +77,15 @@ All business endpoints live under `/api/v1`. Protected endpoints expect `Authori
 | GET | `/actuator/health` | Public | Health check |
 | GET | `/v3/api-docs` | Public | OpenAPI document |
 | GET | `/swagger-ui.html` | Public | Swagger UI |
+| POST | `/api/v1/auth/register` | Public | Register a passenger account (`201`, `409` duplicate email) |
+| POST | `/api/v1/auth/login` | Public | Log in, returns `{accessToken, tokenType, expiresIn}` (`401` bad credentials) |
+| GET | `/api/v1/users/me` | Authenticated | Profile of the current user |
+
+### Authentication
+
+Tokens are stateless JWTs (HS256) valid for 60 minutes. The filter reloads the user from the database on every request,
+so a role change (for example PASSENGER to DRIVER) applies immediately without logging in again.
+Passwords are stored with BCrypt and must have 8 to 72 characters with at least one letter and one number.
 
 ### Error format
 
