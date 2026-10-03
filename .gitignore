@@ -31,3 +31,13 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Runtime ###
+storage/
+.env
+*.log
+
+### Local tooling ###
+.claude/settings.local.json
+.DS_Store
+Thumbs.db

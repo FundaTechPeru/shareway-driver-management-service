@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:16
+    container_name: driver-management-db
+    environment:
+      POSTGRES_DB: driver_management_db
+      POSTGRES_USER: shareway
+      POSTGRES_PASSWORD: shareway
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shareway -d driver_management_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: driver-management-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/driver_management_db
+      SPRING_DATASOURCE_USERNAME: shareway
+      SPRING_DATASOURCE_PASSWORD: shareway
+      JWT_SECRET: ${JWT_SECRET:-dev-only-shareway-driver-management-secret-change-me}
+      STORAGE_PATH: /app/storage
+    ports:
+      - "8081:8081"
+    volumes:
+      - storage:/app/storage
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  storage:
