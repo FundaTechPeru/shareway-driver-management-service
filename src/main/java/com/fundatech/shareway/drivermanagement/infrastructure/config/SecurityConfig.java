@@ -1,5 +1,6 @@
 package com.fundatech.shareway.drivermanagement.infrastructure.config;
 
+import com.fundatech.shareway.drivermanagement.domain.model.Role;
 import com.fundatech.shareway.drivermanagement.infrastructure.security.JwtAuthenticationFilter;
 import com.fundatech.shareway.drivermanagement.infrastructure.security.JwtService;
 import com.fundatech.shareway.drivermanagement.infrastructure.security.SecurityErrorHandler;
@@ -50,6 +51,8 @@ public class SecurityConfig {
                         .accessDeniedHandler(securityErrorHandler))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers("/api/v1/driver-documents/**").hasRole(Role.ADMIN.name())
+                        .requestMatchers("/api/v1/drivers/me/**").hasRole(Role.DRIVER.name())
                         .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtService, userDetailsService),
                         UsernamePasswordAuthenticationFilter.class)
