@@ -1,7 +1,11 @@
 package com.fundatech.shareway.drivermanagement.domain.model;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fundatech.shareway.drivermanagement.shared.exception.ConflictException;
 import jakarta.persistence.CascadeType;
@@ -73,6 +77,10 @@ public class User {
         return new User(email, passwordHash, fullName, phone, Role.PASSENGER);
     }
 
+    public static User createAdmin(String email, String passwordHash, String fullName, String phone) {
+        return new User(email, passwordHash, fullName, phone, Role.ADMIN);
+    }
+
     public static String normalizeEmail(String email) {
         return email == null ? null : email.trim().toLowerCase(Locale.ROOT);
     }
@@ -92,5 +100,26 @@ public class User {
         this.emergencyContact = emergencyContact;
         this.role = Role.DRIVER;
         this.driverStatus = DriverStatus.PENDING_VERIFICATION;
+    }
+
+    /**
+     * Marks the driver as VERIFIED when every document type required for verification has an approved document.
+     *
+     * @return {@code true} only if this call changed the status to VERIFIED
+     */
+    public boolean verifyIfRequirementsMet(Collection<DriverDocument> documents) {
+        if (!isDriver() || driverStatus == DriverStatus.VERIFIED) {
+            return false;
+        }
+        Set<DocumentType> approvedTypes = documents.stream()
+                .filter(document -> Objects.equals(document.getDriverId(), id))
+                .filter(DriverDocument::isApproved)
+                .map(DriverDocument::getType)
+                .collect(Collectors.toSet());
+        if (!approvedTypes.containsAll(DocumentType.requiredForVerification())) {
+            return false;
+        }
+        this.driverStatus = DriverStatus.VERIFIED;
+        return true;
     }
 }
