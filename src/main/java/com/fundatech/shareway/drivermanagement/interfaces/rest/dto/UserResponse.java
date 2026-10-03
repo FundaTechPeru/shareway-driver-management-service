@@ -2,6 +2,7 @@ package com.fundatech.shareway.drivermanagement.interfaces.rest.dto;
 
 import java.time.Instant;
 
+import com.fundatech.shareway.drivermanagement.domain.model.DriverStatus;
 import com.fundatech.shareway.drivermanagement.domain.model.Role;
 import com.fundatech.shareway.drivermanagement.domain.model.User;
 
@@ -11,10 +12,11 @@ public record UserResponse(
         String fullName,
         String phone,
         Role role,
+        DriverStatus driverStatus,
         Instant createdAt) {
 
     public static UserResponse from(User user) {
         return new UserResponse(user.getId(), user.getEmail(), user.getFullName(), user.getPhone(),
-                user.getRole(), user.getCreatedAt());
+                user.getRole(), user.getDriverStatus(), user.getCreatedAt());
     }
 }
