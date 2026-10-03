@@ -80,6 +80,8 @@ All business endpoints live under `/api/v1`. Protected endpoints expect `Authori
 | POST | `/api/v1/auth/register` | Public | Register a passenger account (`201`, `409` duplicate email) |
 | POST | `/api/v1/auth/login` | Public | Log in, returns `{accessToken, tokenType, expiresIn}` (`401` bad credentials) |
 | GET | `/api/v1/users/me` | Authenticated | Profile of the current user |
+| POST | `/api/v1/users/me/driver-profile` | Authenticated | Register as a driver: role becomes `DRIVER`, status `PENDING_VERIFICATION` (`409` already a driver or license taken) |
+| GET | `/api/v1/users/me/driver-profile` | Authenticated | Driver profile (`404` if not a driver) |
 
 ### Authentication
 
