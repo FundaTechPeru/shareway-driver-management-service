@@ -37,6 +37,12 @@ public class CommonSteps {
         assertThat(String.valueOf(actual)).isEqualTo(expected);
     }
 
+    @Then("the response should contain {int} items")
+    public void theResponseShouldContainItems(int expectedCount) {
+        List<?> items = context.read("$");
+        assertThat(items).hasSize(expectedCount);
+    }
+
     @Then("the response should report errors for fields {string}")
     public void theResponseShouldReportErrorsForFields(String fields) {
         List<String> reported = context.read("$.fieldErrors[*].field");
