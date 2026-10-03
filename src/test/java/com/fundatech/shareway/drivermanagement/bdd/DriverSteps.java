@@ -38,8 +38,7 @@ public class DriverSteps {
 
     @Given("I am logged in as a driver with email {string}")
     public void iAmLoggedInAsADriver(String email) {
-        String licenseNumber = "D%09d".formatted(Math.floorMod(email.hashCode(), 1_000_000_000));
-        aDriverIsRegistered(email, licenseNumber);
+        registerAndLogInDriver(context, email);
     }
 
     @Given("I am logged in as a passenger with email {string}")
@@ -65,6 +64,12 @@ public class DriverSteps {
     @When("I request my driver profile")
     public void iRequestMyDriverProfile() {
         context.getRequest(DRIVER_PROFILE_PATH);
+    }
+
+    static void registerAndLogInDriver(ScenarioContext context, String email) {
+        AuthSteps.registerUser(context, email, DEFAULT_PASSWORD);
+        AuthSteps.logIn(context, email, DEFAULT_PASSWORD);
+        registerDriverProfile(context, "D%09d".formatted(Math.floorMod(email.hashCode(), 1_000_000_000)));
     }
 
     static void registerDriverProfile(ScenarioContext context, String licenseNumber) {

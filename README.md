@@ -66,6 +66,7 @@ Swagger UI: http://localhost:8081/swagger-ui.html · OpenAPI document: http://lo
 | `SPRING_DATASOURCE_USERNAME` / `SPRING_DATASOURCE_PASSWORD` | `shareway` / `shareway` | Database credentials |
 | `JWT_SECRET` | development-only value | HMAC secret for JWTs (32+ characters). **Override it outside development.** |
 | `STORAGE_PATH` | `./storage` | Directory for uploaded documents |
+| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | empty | Administrator account created on startup when both are set |
 | `CORS_ALLOWED_ORIGINS` | `http://localhost:4200,http://localhost:5173,http://localhost:3000` | Comma-separated allowed origins |
 
 ## API
@@ -82,6 +83,23 @@ All business endpoints live under `/api/v1`. Protected endpoints expect `Authori
 | GET | `/api/v1/users/me` | Authenticated | Profile of the current user |
 | POST | `/api/v1/users/me/driver-profile` | Authenticated | Register as a driver: role becomes `DRIVER`, status `PENDING_VERIFICATION` (`409` already a driver or license taken) |
 | GET | `/api/v1/users/me/driver-profile` | Authenticated | Driver profile (`404` if not a driver) |
+| POST | `/api/v1/drivers/me/documents` | DRIVER | Upload a document (multipart `type` + `file`; PDF/JPEG/PNG up to 5 MB) |
+| GET | `/api/v1/drivers/me/documents` | DRIVER | List my documents |
+| GET | `/api/v1/drivers/me/documents/{id}` | DRIVER | One of my documents (`404` if not mine) |
+| PATCH | `/api/v1/driver-documents/{id}/review` | ADMIN | `{decision: APPROVED\|REJECTED, reason}`; `reason` is required to reject |
+
+### Driver verification
+
+Document types: `DRIVERS_LICENSE`, `NATIONAL_ID`, `CRIMINAL_RECORD`, `VEHICLE_REGISTRATION`; statuses: `PENDING`, `APPROVED`, `REJECTED`.
+A file is accepted only if its declared content type is PDF, JPEG or PNG **and** its first bytes match that format.
+Files are stored under `STORAGE_PATH` with a random UUID name.
+
+When `DRIVERS_LICENSE`, `NATIONAL_ID` and `CRIMINAL_RECORD` are all approved, the driver becomes `VERIFIED` and a `DriverVerified`
+domain event is published. Rejecting a document publishes `DocumentRejected`. A document can be reviewed only once (`409` otherwise);
+the driver uploads a new one instead. Events are published through Spring application events and, for now, only logged.
+
+There is no public endpoint to create administrators. Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` to create one on startup
+(nothing is created when they are empty).
 
 ### Authentication
 

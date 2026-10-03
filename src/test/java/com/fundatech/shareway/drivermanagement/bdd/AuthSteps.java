@@ -74,6 +74,6 @@ public class AuthSteps {
         context.clearToken();
         context.postJson("/api/v1/auth/login", Map.of("email", email, "password", password));
         assertThat(context.lastStatus()).as(context.lastBody()).isEqualTo(200);
-        context.useToken(context.read("$.accessToken"));
+        context.logIn(email, context.read("$.accessToken"));
     }
 }
