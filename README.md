@@ -87,6 +87,10 @@ All business endpoints live under `/api/v1`. Protected endpoints expect `Authori
 | GET | `/api/v1/drivers/me/documents` | DRIVER | List my documents |
 | GET | `/api/v1/drivers/me/documents/{id}` | DRIVER | One of my documents (`404` if not mine) |
 | PATCH | `/api/v1/driver-documents/{id}/review` | ADMIN | `{decision: APPROVED\|REJECTED, reason}`; `reason` is required to reject |
+| POST | `/api/v1/drivers/me/vehicles` | DRIVER | Register a vehicle (`409` plate taken); verification is not required |
+| GET | `/api/v1/drivers/me/vehicles` | DRIVER | List my vehicles |
+| GET | `/api/v1/drivers/me/vehicles/{id}` | DRIVER | One of my vehicles (`404` if not mine) |
+| PUT | `/api/v1/drivers/me/vehicles/{id}` | DRIVER | Update one of my vehicles (`404` if not mine, `409` plate taken) |
 
 ### Driver verification
 
@@ -97,6 +101,13 @@ Files are stored under `STORAGE_PATH` with a random UUID name.
 When `DRIVERS_LICENSE`, `NATIONAL_ID` and `CRIMINAL_RECORD` are all approved, the driver becomes `VERIFIED` and a `DriverVerified`
 domain event is published. Rejecting a document publishes `DocumentRejected`. A document can be reviewed only once (`409` otherwise);
 the driver uploads a new one instead. Events are published through Spring application events and, for now, only logged.
+
+### Vehicles
+
+Body: `{plate, brand, model, year, color, seats}`. The plate has 6 letters or digits with an optional hyphen and is stored
+in the canonical form `ABC-123` (so `abc123` and `ABC-123` are the same plate). `year` goes from 2000 to next year and `seats` from 1 to 8.
+
+### Administrators
 
 There is no public endpoint to create administrators. Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` to create one on startup
 (nothing is created when they are empty).
