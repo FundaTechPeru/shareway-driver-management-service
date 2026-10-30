@@ -3,12 +3,13 @@ package com.fundatech.shareway.drivermanagement.domain.model;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
 class DriverVerificationRuleTest {
 
-    private static final Long ADMIN_ID = 99L;
+    private static final UUID ADMIN_ID = UUID.randomUUID();
 
     @Test
     void requiredDocumentTypesAreLicenseNationalIdAndCriminalRecord() {

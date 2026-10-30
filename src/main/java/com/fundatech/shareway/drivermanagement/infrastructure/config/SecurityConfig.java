@@ -1,6 +1,7 @@
 package com.fundatech.shareway.drivermanagement.infrastructure.config;
 
 import com.fundatech.shareway.drivermanagement.domain.model.Role;
+import com.fundatech.shareway.drivermanagement.infrastructure.security.DatabaseUserDetailsService;
 import com.fundatech.shareway.drivermanagement.infrastructure.security.JwtAuthenticationFilter;
 import com.fundatech.shareway.drivermanagement.infrastructure.security.JwtService;
 import com.fundatech.shareway.drivermanagement.infrastructure.security.SecurityErrorHandler;
@@ -38,7 +39,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    SecurityErrorHandler securityErrorHandler,
                                                    JwtService jwtService,
-                                                   UserDetailsService userDetailsService) throws Exception {
+                                                   DatabaseUserDetailsService userDetailsService) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())

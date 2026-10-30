@@ -6,11 +6,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 import com.fundatech.shareway.drivermanagement.shared.exception.DomainValidationException;
 import org.junit.jupiter.api.Test;
 
 class DriverAvailabilityTest {
+
+    private static final UUID DRIVER_ID = UUID.randomUUID();
 
     @Test
     void startMustBeBeforeEnd() {
@@ -50,6 +53,6 @@ class DriverAvailabilityTest {
     }
 
     private static DriverAvailability slot(DayOfWeek dayOfWeek, String startTime, String endTime) {
-        return DriverAvailability.create(1L, dayOfWeek, LocalTime.parse(startTime), LocalTime.parse(endTime));
+        return DriverAvailability.create(DRIVER_ID, dayOfWeek, LocalTime.parse(startTime), LocalTime.parse(endTime));
     }
 }

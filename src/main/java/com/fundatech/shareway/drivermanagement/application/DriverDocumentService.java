@@ -1,6 +1,7 @@
 package com.fundatech.shareway.drivermanagement.application;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.fundatech.shareway.drivermanagement.domain.model.DriverDocument;
 import com.fundatech.shareway.drivermanagement.domain.repository.DocumentStorage;
@@ -26,7 +27,7 @@ public class DriverDocumentService {
     }
 
     @Transactional
-    public DriverDocument upload(Long driverId, DocumentUpload upload) {
+    public DriverDocument upload(UUID driverId, DocumentUpload upload) {
         byte[] content = upload.content();
         if (content == null || content.length == 0) {
             throw new DomainValidationException("file", "File must not be empty");
@@ -48,12 +49,12 @@ public class DriverDocumentService {
     }
 
     @Transactional(readOnly = true)
-    public List<DriverDocument> listForDriver(Long driverId) {
+    public List<DriverDocument> listForDriver(UUID driverId) {
         return documentRepository.findAllByDriverId(driverId);
     }
 
     @Transactional(readOnly = true)
-    public DriverDocument getForDriver(Long driverId, Long documentId) {
+    public DriverDocument getForDriver(UUID driverId, UUID documentId) {
         return documentRepository.findByIdAndDriverId(documentId, driverId)
                 .orElseThrow(() -> new ResourceNotFoundException("Document not found"));
     }

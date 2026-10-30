@@ -72,6 +72,8 @@ Swagger UI: http://localhost:8081/swagger-ui.html · OpenAPI document: http://lo
 ## API
 
 All business endpoints live under `/api/v1`. Protected endpoints expect `Authorization: Bearer <token>`.
+Every id (users, documents, vehicles, availability slots and the `driverId`/`userId` fields) is a UUID string; a path id
+that is not a UUID returns `400`.
 
 | Method | Path | Access | Description |
 |---|---|---|---|
@@ -127,8 +129,13 @@ There is no public endpoint to create administrators. Set `ADMIN_EMAIL` and `ADM
 
 ### Authentication
 
-Tokens are stateless JWTs (HS256) valid for 60 minutes. The filter reloads the user from the database on every request,
-so a role change (for example PASSENGER to DRIVER) applies immediately without logging in again.
+Tokens are stateless JWTs (HS256) valid for 60 minutes. Claims: `sub` and `userId` are the user UUID, `email` the user
+email and `role` the role at login time. The API gateway and the other services validate them with the same `JWT_SECRET`.
+The filter reloads the user from the database on every request, so a role change (for example PASSENGER to DRIVER)
+applies immediately without logging in again.
+
+Ids used to be numeric. Hibernate (`ddl-auto=update`) cannot turn the old `bigint` id columns into `uuid`, so a database
+created before the change must be recreated (for example `docker compose down -v`).
 Passwords are stored with BCrypt and must have 8 to 72 characters with at least one letter and one number.
 
 ### Error format

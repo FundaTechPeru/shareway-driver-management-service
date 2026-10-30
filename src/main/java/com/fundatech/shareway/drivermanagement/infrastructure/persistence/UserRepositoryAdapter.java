@@ -1,6 +1,7 @@
 package com.fundatech.shareway.drivermanagement.infrastructure.persistence;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import com.fundatech.shareway.drivermanagement.domain.model.User;
 import com.fundatech.shareway.drivermanagement.domain.repository.UserRepository;
@@ -21,7 +22,7 @@ public class UserRepositoryAdapter implements UserRepository {
     }
 
     @Override
-    public Optional<User> findById(Long id) {
+    public Optional<User> findById(UUID id) {
         return jpaRepository.findById(id);
     }
 

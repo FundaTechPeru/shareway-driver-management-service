@@ -1,14 +1,15 @@
 package com.fundatech.shareway.drivermanagement.interfaces.rest.dto;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import com.fundatech.shareway.drivermanagement.domain.model.DocumentStatus;
 import com.fundatech.shareway.drivermanagement.domain.model.DocumentType;
 import com.fundatech.shareway.drivermanagement.domain.model.DriverDocument;
 
 public record DocumentResponse(
-        Long id,
-        Long driverId,
+        UUID id,
+        UUID driverId,
         DocumentType type,
         DocumentStatus status,
         String originalFilename,
