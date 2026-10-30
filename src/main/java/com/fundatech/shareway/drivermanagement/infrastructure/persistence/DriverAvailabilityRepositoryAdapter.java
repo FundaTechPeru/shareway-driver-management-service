@@ -2,6 +2,7 @@ package com.fundatech.shareway.drivermanagement.infrastructure.persistence;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 import com.fundatech.shareway.drivermanagement.domain.model.DriverAvailability;
 import com.fundatech.shareway.drivermanagement.domain.repository.DriverAvailabilityRepository;
@@ -21,14 +22,14 @@ public class DriverAvailabilityRepositoryAdapter implements DriverAvailabilityRe
     }
 
     @Override
-    public List<DriverAvailability> findAllByDriverId(Long driverId) {
+    public List<DriverAvailability> findAllByDriverId(UUID driverId) {
         return jpaRepository.findAllByDriverId(driverId).stream()
                 .sorted(WEEKLY_ORDER)
                 .toList();
     }
 
     @Override
-    public void deleteAllByDriverId(Long driverId) {
+    public void deleteAllByDriverId(UUID driverId) {
         jpaRepository.deleteAllByDriverId(driverId);
     }
 

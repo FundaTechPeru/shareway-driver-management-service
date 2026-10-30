@@ -1,11 +1,13 @@
 package com.fundatech.shareway.drivermanagement.interfaces.rest.dto;
 
+import java.util.UUID;
+
 import com.fundatech.shareway.drivermanagement.domain.model.DriverStatus;
 import com.fundatech.shareway.drivermanagement.domain.model.EmergencyContact;
 import com.fundatech.shareway.drivermanagement.domain.model.User;
 
 public record DriverProfileResponse(
-        Long userId,
+        UUID userId,
         String fullName,
         String email,
         String licenseNumber,

@@ -1,5 +1,7 @@
 package com.fundatech.shareway.drivermanagement.application;
 
+import java.util.UUID;
+
 import com.fundatech.shareway.drivermanagement.domain.model.EmergencyContact;
 import com.fundatech.shareway.drivermanagement.domain.model.User;
 import com.fundatech.shareway.drivermanagement.domain.repository.UserRepository;
@@ -32,7 +34,7 @@ public class UserRegistrationService {
     }
 
     @Transactional
-    public User registerDriver(Long userId, RegisterDriverCommand command) {
+    public User registerDriver(UUID userId, RegisterDriverCommand command) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         if (user.isDriver()) {

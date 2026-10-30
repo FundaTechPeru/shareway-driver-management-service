@@ -2,6 +2,7 @@ package com.fundatech.shareway.drivermanagement.infrastructure.persistence;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.fundatech.shareway.drivermanagement.domain.model.Vehicle;
 import com.fundatech.shareway.drivermanagement.domain.repository.VehicleRepository;
@@ -22,13 +23,13 @@ public class VehicleRepositoryAdapter implements VehicleRepository {
     }
 
     @Override
-    public Optional<Vehicle> findByIdAndDriverId(Long id, Long driverId) {
+    public Optional<Vehicle> findByIdAndDriverId(UUID id, UUID driverId) {
         return jpaRepository.findByIdAndDriverId(id, driverId);
     }
 
     @Override
-    public List<Vehicle> findAllByDriverId(Long driverId) {
-        return jpaRepository.findAllByDriverIdOrderByIdAsc(driverId);
+    public List<Vehicle> findAllByDriverId(UUID driverId) {
+        return jpaRepository.findAllByDriverIdOrderByCreatedAtAsc(driverId);
     }
 
     @Override
@@ -37,7 +38,7 @@ public class VehicleRepositoryAdapter implements VehicleRepository {
     }
 
     @Override
-    public boolean existsByPlateAndIdNot(String plate, Long id) {
+    public boolean existsByPlateAndIdNot(String plate, UUID id) {
         return jpaRepository.existsByPlateAndIdNot(plate, id);
     }
 }

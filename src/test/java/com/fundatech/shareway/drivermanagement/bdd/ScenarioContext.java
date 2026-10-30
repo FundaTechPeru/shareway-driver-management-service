@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import com.jayway.jsonpath.JsonPath;
 import io.cucumber.spring.ScenarioScope;
@@ -28,7 +29,7 @@ public class ScenarioContext {
 
     private final MockMvc mockMvc;
     private final JsonMapper jsonMapper;
-    private final Map<String, Long> rememberedIds = new HashMap<>();
+    private final Map<String, UUID> rememberedIds = new HashMap<>();
     private String currentToken;
     private String currentEmail;
     private MvcResult lastResult;
@@ -56,21 +57,21 @@ public class ScenarioContext {
         return currentEmail;
     }
 
-    public void rememberId(String key, Long id) {
+    public void rememberId(String key, UUID id) {
         rememberedIds.put(key, id);
     }
 
-    public Long recallId(String key) {
-        Long id = rememberedIds.get(key);
+    public UUID recallId(String key) {
+        UUID id = rememberedIds.get(key);
         if (id == null) {
             throw new IllegalStateException("No id remembered for " + key);
         }
         return id;
     }
 
-    public Long lastId() {
-        Number id = read("$.id");
-        return id.longValue();
+    public UUID lastId() {
+        String id = read("$.id");
+        return UUID.fromString(id);
     }
 
     public MvcResult getRequest(String path) {

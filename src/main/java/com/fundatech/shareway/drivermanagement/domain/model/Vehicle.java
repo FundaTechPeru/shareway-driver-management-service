@@ -2,6 +2,7 @@ package com.fundatech.shareway.drivermanagement.domain.model;
 
 import java.time.Instant;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import com.fundatech.shareway.drivermanagement.shared.exception.DomainValidationException;
@@ -25,11 +26,11 @@ public class Vehicle {
     private static final Pattern PLATE_PATTERN = Pattern.compile("^[A-Z0-9]{3}-?[A-Z0-9]{3}$");
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(name = "driver_id", nullable = false)
-    private Long driverId;
+    private UUID driverId;
 
     @Column(nullable = false, unique = true, length = 7)
     private String plate;
@@ -55,12 +56,12 @@ public class Vehicle {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    private Vehicle(Long driverId) {
+    private Vehicle(UUID driverId) {
         this.driverId = driverId;
         this.createdAt = Instant.now();
     }
 
-    public static Vehicle register(Long driverId, String plate, String brand, String model, int year, String color,
+    public static Vehicle register(UUID driverId, String plate, String brand, String model, int year, String color,
                                    int seats) {
         Vehicle vehicle = new Vehicle(driverId);
         vehicle.update(plate, brand, model, year, color, seats);

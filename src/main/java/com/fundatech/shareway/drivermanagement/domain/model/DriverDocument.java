@@ -1,6 +1,7 @@
 package com.fundatech.shareway.drivermanagement.domain.model;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import com.fundatech.shareway.drivermanagement.shared.exception.ConflictException;
 import com.fundatech.shareway.drivermanagement.shared.exception.DomainValidationException;
@@ -24,11 +25,11 @@ import lombok.NoArgsConstructor;
 public class DriverDocument {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(name = "driver_id", nullable = false)
-    private Long driverId;
+    private UUID driverId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "document_type", nullable = false, length = 30)
@@ -54,7 +55,7 @@ public class DriverDocument {
     private String rejectionReason;
 
     @Column(name = "reviewed_by")
-    private Long reviewedBy;
+    private UUID reviewedBy;
 
     @Column(name = "uploaded_at", nullable = false, updatable = false)
     private Instant uploadedAt;
@@ -62,7 +63,7 @@ public class DriverDocument {
     @Column(name = "reviewed_at")
     private Instant reviewedAt;
 
-    private DriverDocument(Long driverId, DocumentType type, String originalFilename, String contentType,
+    private DriverDocument(UUID driverId, DocumentType type, String originalFilename, String contentType,
                            long sizeBytes, String storageKey) {
         this.driverId = driverId;
         this.type = type;
@@ -74,19 +75,19 @@ public class DriverDocument {
         this.uploadedAt = Instant.now();
     }
 
-    public static DriverDocument upload(Long driverId, DocumentType type, String originalFilename, String contentType,
+    public static DriverDocument upload(UUID driverId, DocumentType type, String originalFilename, String contentType,
                                         long sizeBytes, String storageKey) {
         return new DriverDocument(driverId, type, originalFilename, contentType, sizeBytes, storageKey);
     }
 
-    public void approve(Long reviewerId) {
+    public void approve(UUID reviewerId) {
         ensurePending();
         this.status = DocumentStatus.APPROVED;
         this.rejectionReason = null;
         markReviewed(reviewerId);
     }
 
-    public void reject(Long reviewerId, String reason) {
+    public void reject(UUID reviewerId, String reason) {
         if (reason == null || reason.isBlank()) {
             throw new DomainValidationException("reason", "reason is required when rejecting a document");
         }
@@ -106,7 +107,7 @@ public class DriverDocument {
         }
     }
 
-    private void markReviewed(Long reviewerId) {
+    private void markReviewed(UUID reviewerId) {
         this.reviewedBy = reviewerId;
         this.reviewedAt = Instant.now();
     }

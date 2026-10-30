@@ -2,6 +2,7 @@ package com.fundatech.shareway.drivermanagement.interfaces.rest;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import com.fundatech.shareway.drivermanagement.application.DocumentUpload;
 import com.fundatech.shareway.drivermanagement.application.DriverDocumentService;
@@ -63,7 +64,7 @@ public class DriverDocumentController {
     @GetMapping("/drivers/me/documents/{id}")
     @Operation(summary = "Get one of my documents", description = "Drivers only. Returns 404 if the document is not mine.")
     public DocumentResponse get(@Parameter(hidden = true) @AuthenticationPrincipal AuthenticatedUser principal,
-                                @PathVariable Long id) {
+                                @PathVariable UUID id) {
         return DocumentResponse.from(driverDocumentService.getForDriver(principal.id(), id));
     }
 
@@ -72,7 +73,7 @@ public class DriverDocumentController {
             description = "Administrators only. A reason is required to reject. Approving DRIVERS_LICENSE, NATIONAL_ID "
                     + "and CRIMINAL_RECORD verifies the driver.")
     public DocumentResponse review(@Parameter(hidden = true) @AuthenticationPrincipal AuthenticatedUser principal,
-                                   @PathVariable Long id,
+                                   @PathVariable UUID id,
                                    @Valid @RequestBody ReviewDocumentRequest request) {
         return DocumentResponse.from(driverVerificationService.review(id, principal.id(), request.decision(), request.reason()));
     }

@@ -3,6 +3,7 @@ package com.fundatech.shareway.drivermanagement.domain.model;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 import com.fundatech.shareway.drivermanagement.shared.exception.DomainValidationException;
 import jakarta.persistence.Column;
@@ -26,11 +27,11 @@ import lombok.NoArgsConstructor;
 public class DriverAvailability {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(name = "driver_id", nullable = false)
-    private Long driverId;
+    private UUID driverId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "day_of_week", nullable = false, length = 10)
@@ -42,14 +43,14 @@ public class DriverAvailability {
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
-    private DriverAvailability(Long driverId, DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
+    private DriverAvailability(UUID driverId, DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
         this.driverId = driverId;
         this.dayOfWeek = dayOfWeek;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public static DriverAvailability create(Long driverId, DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
+    public static DriverAvailability create(UUID driverId, DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
         if (!startTime.isBefore(endTime)) {
             throw new DomainValidationException("slots",
                     "startTime must be before endTime (%s %s-%s)".formatted(dayOfWeek, startTime, endTime));
