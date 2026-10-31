@@ -1,5 +1,8 @@
 package com.fundatech.shareway.drivermanagement.infrastructure.security;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import com.fundatech.shareway.drivermanagement.domain.model.User;
 import com.fundatech.shareway.drivermanagement.domain.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,5 +26,13 @@ public class DatabaseUserDetailsService implements UserDetailsService {
         return userRepository.findByEmail(User.normalizeEmail(username))
                 .map(AuthenticatedUser::from)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    /**
+     * Loads the user named by the {@code sub} claim of an access token, which is the user UUID.
+     */
+    @Transactional(readOnly = true)
+    public Optional<UserDetails> loadUserById(UUID id) {
+        return userRepository.findById(id).map(AuthenticatedUser::from);
     }
 }

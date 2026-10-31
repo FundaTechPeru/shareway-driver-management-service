@@ -1,5 +1,7 @@
 package com.fundatech.shareway.drivermanagement.domain.model;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -9,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 class DriverDocumentTest {
 
-    private static final Long ADMIN_ID = 99L;
+    private static final UUID ADMIN_ID = UUID.randomUUID();
 
     @Test
     void uploadedDocumentStartsPending() {
@@ -61,6 +63,6 @@ class DriverDocumentTest {
     }
 
     private static DriverDocument license() {
-        return DriverDocument.upload(1L, DocumentType.DRIVERS_LICENSE, "license.pdf", "application/pdf", 1024, "key.pdf");
+        return DriverDocument.upload(UUID.randomUUID(), DocumentType.DRIVERS_LICENSE, "license.pdf", "application/pdf", 1024, "key.pdf");
     }
 }

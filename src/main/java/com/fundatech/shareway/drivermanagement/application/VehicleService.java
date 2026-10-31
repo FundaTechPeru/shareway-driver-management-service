@@ -1,6 +1,7 @@
 package com.fundatech.shareway.drivermanagement.application;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.fundatech.shareway.drivermanagement.domain.model.Vehicle;
 import com.fundatech.shareway.drivermanagement.domain.repository.VehicleRepository;
@@ -19,7 +20,7 @@ public class VehicleService {
     }
 
     @Transactional
-    public Vehicle register(Long driverId, VehicleCommand command) {
+    public Vehicle register(UUID driverId, VehicleCommand command) {
         if (vehicleRepository.existsByPlate(Vehicle.normalizePlate(command.plate()))) {
             throw new ConflictException("Plate is already registered");
         }
@@ -28,18 +29,18 @@ public class VehicleService {
     }
 
     @Transactional(readOnly = true)
-    public List<Vehicle> listForDriver(Long driverId) {
+    public List<Vehicle> listForDriver(UUID driverId) {
         return vehicleRepository.findAllByDriverId(driverId);
     }
 
     @Transactional(readOnly = true)
-    public Vehicle getForDriver(Long driverId, Long vehicleId) {
+    public Vehicle getForDriver(UUID driverId, UUID vehicleId) {
         return vehicleRepository.findByIdAndDriverId(vehicleId, driverId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
     }
 
     @Transactional
-    public Vehicle update(Long driverId, Long vehicleId, VehicleCommand command) {
+    public Vehicle update(UUID driverId, UUID vehicleId, VehicleCommand command) {
         Vehicle vehicle = getForDriver(driverId, vehicleId);
         if (vehicleRepository.existsByPlateAndIdNot(Vehicle.normalizePlate(command.plate()), vehicleId)) {
             throw new ConflictException("Plate is already registered");

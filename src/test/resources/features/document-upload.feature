@@ -124,5 +124,5 @@ Feature: Driver document upload and review
 
   Scenario: Return not found when reviewing an unknown document
     Given I am logged in as an administrator
-    When I approve the document with id 999999
+    When I approve the document with id "00000000-0000-0000-0000-000000999999"
     Then the request should fail with status 404

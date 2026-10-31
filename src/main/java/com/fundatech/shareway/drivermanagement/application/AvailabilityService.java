@@ -1,6 +1,7 @@
 package com.fundatech.shareway.drivermanagement.application;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.fundatech.shareway.drivermanagement.domain.model.DriverAvailability;
 import com.fundatech.shareway.drivermanagement.domain.repository.DriverAvailabilityRepository;
@@ -17,12 +18,12 @@ public class AvailabilityService {
     }
 
     @Transactional(readOnly = true)
-    public List<DriverAvailability> getWeeklySchedule(Long driverId) {
+    public List<DriverAvailability> getWeeklySchedule(UUID driverId) {
         return availabilityRepository.findAllByDriverId(driverId);
     }
 
     @Transactional
-    public List<DriverAvailability> replaceWeeklySchedule(Long driverId, List<AvailabilitySlotCommand> slots) {
+    public List<DriverAvailability> replaceWeeklySchedule(UUID driverId, List<AvailabilitySlotCommand> slots) {
         List<DriverAvailability> schedule = slots.stream()
                 .map(slot -> DriverAvailability.create(driverId, slot.dayOfWeek(), slot.startTime(), slot.endTime()))
                 .toList();

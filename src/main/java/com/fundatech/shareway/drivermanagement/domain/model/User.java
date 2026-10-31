@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.fundatech.shareway.drivermanagement.shared.exception.ConflictException;
@@ -31,8 +32,8 @@ import lombok.NoArgsConstructor;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false, unique = true, length = 120)
     private String email;

@@ -1,6 +1,7 @@
 package com.fundatech.shareway.drivermanagement.interfaces.rest;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.fundatech.shareway.drivermanagement.application.VehicleService;
 import com.fundatech.shareway.drivermanagement.infrastructure.security.AuthenticatedUser;
@@ -50,14 +51,14 @@ public class VehicleController {
     @GetMapping("/{id}")
     @Operation(summary = "Get one of my vehicles", description = "Returns 404 if the vehicle is not mine.")
     public VehicleResponse get(@Parameter(hidden = true) @AuthenticationPrincipal AuthenticatedUser principal,
-                               @PathVariable Long id) {
+                               @PathVariable UUID id) {
         return VehicleResponse.from(vehicleService.getForDriver(principal.id(), id));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update one of my vehicles", description = "Returns 404 if the vehicle is not mine.")
     public VehicleResponse update(@Parameter(hidden = true) @AuthenticationPrincipal AuthenticatedUser principal,
-                                  @PathVariable Long id,
+                                  @PathVariable UUID id,
                                   @Valid @RequestBody VehicleRequest request) {
         return VehicleResponse.from(vehicleService.update(principal.id(), id, request.toCommand()));
     }

@@ -1,5 +1,7 @@
 package com.fundatech.shareway.drivermanagement.domain.model;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -24,13 +26,14 @@ class VehicleTest {
 
     @Test
     void registerAndUpdateKeepTheNormalizedPlate() {
-        Vehicle vehicle = Vehicle.register(1L, "abc123", " Toyota ", "Yaris", 2020, "Red", 4);
+        UUID driverId = UUID.randomUUID();
+        Vehicle vehicle = Vehicle.register(driverId, "abc123", " Toyota ", "Yaris", 2020, "Red", 4);
 
         vehicle.update("def-456", "Toyota", "Yaris", 2021, " Blue ", 5);
 
         assertThat(vehicle.getPlate()).isEqualTo("DEF-456");
         assertThat(vehicle.getColor()).isEqualTo("Blue");
         assertThat(vehicle.getSeats()).isEqualTo(5);
-        assertThat(vehicle.getDriverId()).isEqualTo(1L);
+        assertThat(vehicle.getDriverId()).isEqualTo(driverId);
     }
 }

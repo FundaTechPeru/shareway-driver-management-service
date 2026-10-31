@@ -1,5 +1,7 @@
 package com.fundatech.shareway.drivermanagement.application;
 
+import java.util.UUID;
+
 import com.fundatech.shareway.drivermanagement.domain.event.DocumentRejected;
 import com.fundatech.shareway.drivermanagement.domain.event.DomainEventPublisher;
 import com.fundatech.shareway.drivermanagement.domain.event.DriverVerified;
@@ -26,7 +28,7 @@ public class DriverVerificationService {
     }
 
     @Transactional
-    public DriverDocument review(Long documentId, Long reviewerId, ReviewDecision decision, String reason) {
+    public DriverDocument review(UUID documentId, UUID reviewerId, ReviewDecision decision, String reason) {
         DriverDocument document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Document not found"));
 
@@ -45,7 +47,7 @@ public class DriverVerificationService {
         return reviewed;
     }
 
-    private void verifyDriverIfEligible(Long driverId) {
+    private void verifyDriverIfEligible(UUID driverId) {
         User driver = userRepository.findById(driverId)
                 .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
         if (driver.verifyIfRequirementsMet(documentRepository.findAllByDriverId(driverId))) {

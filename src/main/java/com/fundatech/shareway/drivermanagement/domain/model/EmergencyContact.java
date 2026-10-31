@@ -1,5 +1,7 @@
 package com.fundatech.shareway.drivermanagement.domain.model;
 
+import java.util.UUID;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,8 +19,8 @@ import lombok.NoArgsConstructor;
 public class EmergencyContact {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false, length = 100)
     private String name;

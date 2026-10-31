@@ -1,7 +1,6 @@
 package com.fundatech.shareway.drivermanagement.infrastructure.security;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,24 +11,23 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * Authenticates requests carrying a valid bearer token. The user is reloaded from the database on every
- * request, so role changes (for example PASSENGER to DRIVER) apply without issuing a new token.
+ * Authenticates requests carrying a valid bearer token. The user named by the {@code sub} claim (the user UUID)
+ * is reloaded from the database on every request, so role changes (for example PASSENGER to DRIVER) apply without
+ * issuing a new token.
  */
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
 
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
+    private final DatabaseUserDetailsService userDetailsService;
     private final WebAuthenticationDetailsSource detailsSource = new WebAuthenticationDetailsSource();
 
-    public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService) {
+    public JwtAuthenticationFilter(JwtService jwtService, DatabaseUserDetailsService userDetailsService) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
     }
@@ -40,19 +38,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (header != null && header.startsWith(BEARER_PREFIX)
                 && SecurityContextHolder.getContext().getAuthentication() == null) {
-            jwtService.extractSubject(header.substring(BEARER_PREFIX.length()).trim())
-                    .flatMap(this::loadUser)
+            jwtService.extractUserId(header.substring(BEARER_PREFIX.length()).trim())
+                    .flatMap(userDetailsService::loadUserById)
                     .ifPresent(user -> authenticate(user, request));
         }
         filterChain.doFilter(request, response);
-    }
-
-    private Optional<UserDetails> loadUser(String email) {
-        try {
-            return Optional.of(userDetailsService.loadUserByUsername(email));
-        } catch (UsernameNotFoundException ex) {
-            return Optional.empty();
-        }
     }
 
     private void authenticate(UserDetails user, HttpServletRequest request) {

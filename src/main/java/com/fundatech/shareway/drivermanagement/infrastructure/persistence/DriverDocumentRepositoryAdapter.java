@@ -2,6 +2,7 @@ package com.fundatech.shareway.drivermanagement.infrastructure.persistence;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.fundatech.shareway.drivermanagement.domain.model.DriverDocument;
 import com.fundatech.shareway.drivermanagement.domain.repository.DriverDocumentRepository;
@@ -22,17 +23,17 @@ public class DriverDocumentRepositoryAdapter implements DriverDocumentRepository
     }
 
     @Override
-    public Optional<DriverDocument> findById(Long id) {
+    public Optional<DriverDocument> findById(UUID id) {
         return jpaRepository.findById(id);
     }
 
     @Override
-    public Optional<DriverDocument> findByIdAndDriverId(Long id, Long driverId) {
+    public Optional<DriverDocument> findByIdAndDriverId(UUID id, UUID driverId) {
         return jpaRepository.findByIdAndDriverId(id, driverId);
     }
 
     @Override
-    public List<DriverDocument> findAllByDriverId(Long driverId) {
-        return jpaRepository.findAllByDriverIdOrderByIdAsc(driverId);
+    public List<DriverDocument> findAllByDriverId(UUID driverId) {
+        return jpaRepository.findAllByDriverIdOrderByUploadedAtAsc(driverId);
     }
 }

@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import com.fundatech.shareway.drivermanagement.domain.model.User;
@@ -128,9 +129,9 @@ public class DocumentSteps {
         review(context.recallId(documentKey(email, type)), decision, null);
     }
 
-    @When("I approve the document with id {long}")
-    public void iApproveTheDocumentWithId(long id) {
-        review(id, "APPROVED", null);
+    @When("I approve the document with id {string}")
+    public void iApproveTheDocumentWithId(String id) {
+        review(UUID.fromString(id), "APPROVED", null);
     }
 
     @Then("the driver {string} should have status {string}")
@@ -167,7 +168,7 @@ public class DocumentSteps {
         context.perform(multipart(DOCUMENTS_PATH).file(file).param("type", type));
     }
 
-    private void review(Long documentId, String decision, String reason) {
+    private void review(UUID documentId, String decision, String reason) {
         Map<String, Object> body = new HashMap<>();
         body.put("decision", decision);
         body.put("reason", reason);

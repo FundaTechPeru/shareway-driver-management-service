@@ -1,5 +1,7 @@
 package com.fundatech.shareway.drivermanagement.application;
 
+import java.util.UUID;
+
 import com.fundatech.shareway.drivermanagement.domain.model.User;
 import com.fundatech.shareway.drivermanagement.domain.repository.UserRepository;
 import com.fundatech.shareway.drivermanagement.shared.exception.ResourceNotFoundException;
@@ -16,13 +18,13 @@ public class UserProfileService {
     }
 
     @Transactional(readOnly = true)
-    public User getProfile(Long userId) {
+    public User getProfile(UUID userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
     @Transactional(readOnly = true)
-    public User getDriverProfile(Long userId) {
+    public User getDriverProfile(UUID userId) {
         User user = getProfile(userId);
         if (!user.isDriver()) {
             throw new ResourceNotFoundException("Driver profile not found");

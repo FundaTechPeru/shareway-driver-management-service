@@ -1,11 +1,12 @@
 package com.fundatech.shareway.drivermanagement.interfaces.rest.dto;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import com.fundatech.shareway.drivermanagement.domain.model.Vehicle;
 
 public record VehicleResponse(
-        Long id,
+        UUID id,
         String plate,
         String brand,
         String model,
