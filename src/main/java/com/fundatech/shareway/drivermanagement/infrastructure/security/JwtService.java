@@ -33,7 +33,13 @@ public class JwtService implements AccessTokenProvider {
     private final Duration expiration;
 
     public JwtService(JwtProperties properties) {
-        this.signingKey = Keys.hmacShaKeyFor(properties.secret().getBytes(StandardCharsets.UTF_8));
+        String secret = properties.secret();
+        if (secret == null || secret.isBlank()) {
+            throw new IllegalStateException(
+                    "app.jwt.secret is not set. Provide the JWT_SECRET environment variable "
+                            + "(or run with the dev profile for the development default).");
+        }
+        this.signingKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.expiration = Duration.ofMinutes(properties.expirationMinutes());
     }
 
