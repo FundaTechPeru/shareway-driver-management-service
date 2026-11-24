@@ -7,8 +7,10 @@ import java.util.UUID;
 import com.fundatech.shareway.drivermanagement.application.DocumentUpload;
 import com.fundatech.shareway.drivermanagement.application.DriverDocumentService;
 import com.fundatech.shareway.drivermanagement.application.DriverVerificationService;
+import com.fundatech.shareway.drivermanagement.domain.model.DocumentStatus;
 import com.fundatech.shareway.drivermanagement.domain.model.DocumentType;
 import com.fundatech.shareway.drivermanagement.infrastructure.security.AuthenticatedUser;
+import com.fundatech.shareway.drivermanagement.interfaces.rest.dto.AdminDriverDocumentResponse;
 import com.fundatech.shareway.drivermanagement.interfaces.rest.dto.DocumentResponse;
 import com.fundatech.shareway.drivermanagement.interfaces.rest.dto.ReviewDocumentRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -66,6 +68,17 @@ public class DriverDocumentController {
     public DocumentResponse get(@Parameter(hidden = true) @AuthenticationPrincipal AuthenticatedUser principal,
                                 @PathVariable UUID id) {
         return DocumentResponse.from(driverDocumentService.getForDriver(principal.id(), id));
+    }
+
+    @GetMapping("/driver-documents")
+    @Operation(summary = "List driver documents by status",
+            description = "Administrators only. Without a status it returns every document; with one "
+                    + "(e.g. PENDING) only those in that status. Each row carries the driver that submitted it.")
+    public List<AdminDriverDocumentResponse> listByStatus(
+            @RequestParam(name = "status", required = false) DocumentStatus status) {
+        return driverDocumentService.listByStatus(status).stream()
+                .map(AdminDriverDocumentResponse::from)
+                .toList();
     }
 
     @PatchMapping("/driver-documents/{id}/review")

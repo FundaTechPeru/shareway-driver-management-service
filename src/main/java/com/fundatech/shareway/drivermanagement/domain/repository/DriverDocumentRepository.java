@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.fundatech.shareway.drivermanagement.domain.model.DocumentStatus;
 import com.fundatech.shareway.drivermanagement.domain.model.DriverDocument;
 
 public interface DriverDocumentRepository {
@@ -15,4 +16,8 @@ public interface DriverDocumentRepository {
     Optional<DriverDocument> findByIdAndDriverId(UUID id, UUID driverId);
 
     List<DriverDocument> findAllByDriverId(UUID driverId);
+
+    List<DriverDocument> findAllByStatus(DocumentStatus status);
+
+    List<DriverDocument> findAll();
 }

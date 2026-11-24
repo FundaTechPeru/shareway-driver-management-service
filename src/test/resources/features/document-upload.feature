@@ -87,6 +87,20 @@ Feature: Driver document upload and review
     And the driver "carlos.diaz@upc.edu.pe" should have status "VERIFIED"
     And a "DriverVerified" event should have been published
 
+  Scenario: An administrator lists the documents pending review
+    Given a driver "maria.lopez@upc.edu.pe" has uploaded a "DRIVERS_LICENSE" document
+    And a driver "jose.ramos@upc.edu.pe" has uploaded a "NATIONAL_ID" document
+    And I am logged in as an administrator
+    When I list the documents with status "PENDING"
+    Then the response status should be 200
+    And the response should contain 2 items
+    And the document queue should include a document submitted by "maria.lopez@upc.edu.pe"
+    And every document in the queue should carry its driver's name and email
+
+  Scenario: Only administrators can list the document queue
+    When I list the documents with status "PENDING"
+    Then the request should fail with status 403
+
   Scenario: Reject a document with a reason
     Given I have uploaded a "CRIMINAL_RECORD" document
     And I am logged in as an administrator
