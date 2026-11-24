@@ -31,4 +31,18 @@ public class UserProfileService {
         }
         return user;
     }
+
+    /**
+     * Public profile of a driver for any authenticated user (US-07). Returns 404 when the user does
+     * not exist or is not a driver, so a passenger can only look up real drivers.
+     */
+    @Transactional(readOnly = true)
+    public User getPublicDriverProfile(UUID driverId) {
+        User user = userRepository.findById(driverId)
+                .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
+        if (!user.isDriver()) {
+            throw new ResourceNotFoundException("Driver not found");
+        }
+        return user;
+    }
 }
