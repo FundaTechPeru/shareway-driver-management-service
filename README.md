@@ -39,9 +39,11 @@ Prerequisites: JDK 25 and Docker.
 # 1. Start PostgreSQL (host port 5433)
 docker compose up -d db
 
-# 2. Run the service on http://localhost:8081
-./mvnw spring-boot:run
+# 2. Run the service on http://localhost:8081 (the dev profile supplies a development JWT secret)
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 ```
+
+Outside the `dev`/`test`/`local` profiles you must provide a real `JWT_SECRET`, or the service refuses to start.
 
 Or run everything in containers:
 
@@ -64,7 +66,7 @@ Swagger UI: http://localhost:8081/swagger-ui.html · OpenAPI document: http://lo
 | `SERVER_PORT` | `8081` | HTTP port |
 | `SPRING_DATASOURCE_URL` | `jdbc:postgresql://localhost:5433/driver_management_db` | JDBC URL |
 | `SPRING_DATASOURCE_USERNAME` / `SPRING_DATASOURCE_PASSWORD` | `shareway` / `shareway` | Database credentials |
-| `JWT_SECRET` | development-only value | HMAC secret for JWTs (32+ characters). **Override it outside development.** |
+| `JWT_SECRET` | none (dev default only under the `dev` profile) | HMAC secret for JWTs (32+ characters). **Required in production**: outside the `dev`/`test`/`local` profiles the service refuses to start when it is missing or still the development example value. For local runs activate the `dev` profile (`--spring.profiles.active=dev`). |
 | `STORAGE_PATH` | `./storage` | Directory for uploaded documents |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | empty | Administrator account created on startup when both are set |
 | `CORS_ALLOWED_ORIGINS` | `http://localhost:4200,http://localhost:5173,http://localhost:3000` | Comma-separated allowed origins |
@@ -85,9 +87,11 @@ that is not a UUID returns `400`.
 | GET | `/api/v1/users/me` | Authenticated | Profile of the current user |
 | POST | `/api/v1/users/me/driver-profile` | Authenticated | Register as a driver: role becomes `DRIVER`, status `PENDING_VERIFICATION` (`409` already a driver or license taken) |
 | GET | `/api/v1/users/me/driver-profile` | Authenticated | Driver profile (`404` if not a driver) |
+| GET | `/api/v1/drivers/{id}/public-profile` | Authenticated | Public driver profile: `fullName`, `driverStatus`, `licenseNumber` (`404` if not a driver) |
 | POST | `/api/v1/drivers/me/documents` | DRIVER | Upload a document (multipart `type` + `file`; PDF/JPEG/PNG up to 5 MB) |
 | GET | `/api/v1/drivers/me/documents` | DRIVER | List my documents |
 | GET | `/api/v1/drivers/me/documents/{id}` | DRIVER | One of my documents (`404` if not mine) |
+| GET | `/api/v1/driver-documents` | ADMIN | List documents (optional `?status=PENDING\|APPROVED\|REJECTED`); each row carries the `driver` who submitted it |
 | PATCH | `/api/v1/driver-documents/{id}/review` | ADMIN | `{decision: APPROVED\|REJECTED, reason}`; `reason` is required to reject |
 | POST | `/api/v1/drivers/me/vehicles` | DRIVER | Register a vehicle (`409` plate taken); verification is not required |
 | GET | `/api/v1/drivers/me/vehicles` | DRIVER | List my vehicles |
