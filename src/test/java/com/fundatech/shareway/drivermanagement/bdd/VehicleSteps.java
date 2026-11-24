@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.Year;
 import java.util.Map;
 
+import com.fundatech.shareway.drivermanagement.domain.model.User;
+import com.fundatech.shareway.drivermanagement.domain.repository.UserRepository;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 
@@ -13,9 +15,18 @@ public class VehicleSteps {
     private static final String VEHICLES_PATH = "/api/v1/drivers/me/vehicles";
 
     private final ScenarioContext context;
+    private final UserRepository userRepository;
 
-    public VehicleSteps(ScenarioContext context) {
+    public VehicleSteps(ScenarioContext context, UserRepository userRepository) {
         this.context = context;
+        this.userRepository = userRepository;
+    }
+
+    @When("I look up the vehicle of the driver {string}")
+    public void iLookUpTheVehicleOfTheDriver(String email) {
+        User user = userRepository.findByEmail(User.normalizeEmail(email))
+                .orElseThrow(() -> new IllegalStateException("No user registered with email " + email));
+        context.getRequest("/api/v1/drivers/" + user.getId() + "/vehicle");
     }
 
     @Given("I have registered a vehicle with plate {string}")
