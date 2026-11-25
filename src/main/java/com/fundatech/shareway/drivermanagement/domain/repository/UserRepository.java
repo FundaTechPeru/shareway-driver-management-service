@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.fundatech.shareway.drivermanagement.domain.model.User;
+import com.fundatech.shareway.drivermanagement.shared.PagedResult;
 
 public interface UserRepository {
 
@@ -16,4 +17,7 @@ public interface UserRepository {
     boolean existsByEmail(String email);
 
     boolean existsByLicenseNumber(String licenseNumber);
+
+    /** Paged administrative search with optional role, email and full-name filters. */
+    PagedResult<User> search(UserQuery query);
 }
