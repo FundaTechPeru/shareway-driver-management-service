@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.fundatech.shareway.drivermanagement.domain.model.DocumentStatus;
 import com.fundatech.shareway.drivermanagement.domain.model.DriverDocument;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,4 +13,8 @@ public interface SpringDataDriverDocumentRepository extends JpaRepository<Driver
     Optional<DriverDocument> findByIdAndDriverId(UUID id, UUID driverId);
 
     List<DriverDocument> findAllByDriverIdOrderByUploadedAtAsc(UUID driverId);
+
+    List<DriverDocument> findAllByStatusOrderByUploadedAtAsc(DocumentStatus status);
+
+    List<DriverDocument> findAllByOrderByUploadedAtAsc();
 }

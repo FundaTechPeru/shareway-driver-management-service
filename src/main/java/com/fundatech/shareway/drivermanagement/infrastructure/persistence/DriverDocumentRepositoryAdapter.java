@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.fundatech.shareway.drivermanagement.domain.model.DocumentStatus;
 import com.fundatech.shareway.drivermanagement.domain.model.DriverDocument;
 import com.fundatech.shareway.drivermanagement.domain.repository.DriverDocumentRepository;
 import org.springframework.stereotype.Repository;
@@ -35,5 +36,15 @@ public class DriverDocumentRepositoryAdapter implements DriverDocumentRepository
     @Override
     public List<DriverDocument> findAllByDriverId(UUID driverId) {
         return jpaRepository.findAllByDriverIdOrderByUploadedAtAsc(driverId);
+    }
+
+    @Override
+    public List<DriverDocument> findAllByStatus(DocumentStatus status) {
+        return jpaRepository.findAllByStatusOrderByUploadedAtAsc(status);
+    }
+
+    @Override
+    public List<DriverDocument> findAll() {
+        return jpaRepository.findAllByOrderByUploadedAtAsc();
     }
 }

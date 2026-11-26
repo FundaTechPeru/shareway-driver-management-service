@@ -3,9 +3,11 @@ package com.fundatech.shareway.drivermanagement.application;
 import java.util.List;
 import java.util.UUID;
 
+import com.fundatech.shareway.drivermanagement.domain.model.DocumentStatus;
 import com.fundatech.shareway.drivermanagement.domain.model.DriverDocument;
 import com.fundatech.shareway.drivermanagement.domain.repository.DocumentStorage;
 import com.fundatech.shareway.drivermanagement.domain.repository.DriverDocumentRepository;
+import com.fundatech.shareway.drivermanagement.domain.repository.UserRepository;
 import com.fundatech.shareway.drivermanagement.shared.exception.DomainValidationException;
 import com.fundatech.shareway.drivermanagement.shared.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -20,10 +22,13 @@ public class DriverDocumentService {
 
     private final DriverDocumentRepository documentRepository;
     private final DocumentStorage documentStorage;
+    private final UserRepository userRepository;
 
-    public DriverDocumentService(DriverDocumentRepository documentRepository, DocumentStorage documentStorage) {
+    public DriverDocumentService(DriverDocumentRepository documentRepository, DocumentStorage documentStorage,
+                                 UserRepository userRepository) {
         this.documentRepository = documentRepository;
         this.documentStorage = documentStorage;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -51,6 +56,21 @@ public class DriverDocumentService {
     @Transactional(readOnly = true)
     public List<DriverDocument> listForDriver(UUID driverId) {
         return documentRepository.findAllByDriverId(driverId);
+    }
+
+    /**
+     * Lists documents for the administration panel, each one paired with the driver that submitted it.
+     * A {@code null} status returns every document; otherwise only those in that status.
+     */
+    @Transactional(readOnly = true)
+    public List<DriverDocumentWithDriver> listByStatus(DocumentStatus status) {
+        List<DriverDocument> documents = status == null
+                ? documentRepository.findAll()
+                : documentRepository.findAllByStatus(status);
+        return documents.stream()
+                .map(document -> new DriverDocumentWithDriver(document,
+                        userRepository.findById(document.getDriverId()).orElse(null)))
+                .toList();
     }
 
     @Transactional(readOnly = true)
