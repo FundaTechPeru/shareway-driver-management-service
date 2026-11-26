@@ -5,6 +5,8 @@ import java.util.UUID;
 import com.fundatech.shareway.drivermanagement.application.VehicleService;
 import com.fundatech.shareway.drivermanagement.interfaces.rest.dto.VehicleResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +31,12 @@ public class AdminDriverController {
     @Operation(summary = "Get the current vehicle of a driver",
             description = "Administrators only. Returns the driver's current vehicle, or 404 if the "
                     + "driver has none (US-36).")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "The driver's current vehicle"),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid token", content = @io.swagger.v3.oas.annotations.media.Content()),
+            @ApiResponse(responseCode = "403", description = "The caller is not an administrator", content = @io.swagger.v3.oas.annotations.media.Content()),
+            @ApiResponse(responseCode = "404", description = "The driver has no vehicle", content = @io.swagger.v3.oas.annotations.media.Content())
+    })
     public VehicleResponse vehicle(@PathVariable UUID id) {
         return VehicleResponse.from(vehicleService.getCurrentVehicleForDriver(id));
     }

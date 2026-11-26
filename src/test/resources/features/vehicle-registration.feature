@@ -97,6 +97,12 @@ Feature: Vehicle registration
     When I look up the vehicle of the driver "maria.lopez@upc.edu.pe"
     Then the request should fail with status 403
 
+  Scenario: The admin vehicle lookup requires authentication
+    Given a driver "maria.lopez@upc.edu.pe" has registered a vehicle with plate "MAR-001"
+    And I am not logged in
+    When I look up the vehicle of the driver "maria.lopez@upc.edu.pe"
+    Then the request should fail with status 401
+
   Scenario: Reject vehicle registration from passengers
     Given I am logged in as a passenger with email "ana.torres@upc.edu.pe"
     When I register a vehicle with plate "ABC-123", brand "Toyota", model "Yaris", year 2020, color "Red" and 4 seats

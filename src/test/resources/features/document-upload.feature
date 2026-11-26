@@ -101,6 +101,11 @@ Feature: Driver document upload and review
     When I list the documents with status "PENDING"
     Then the request should fail with status 403
 
+  Scenario: The document queue requires authentication
+    Given I am not logged in
+    When I list the documents with status "PENDING"
+    Then the request should fail with status 401
+
   Scenario: Reject a document with a reason
     Given I have uploaded a "CRIMINAL_RECORD" document
     And I am logged in as an administrator

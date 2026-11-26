@@ -47,3 +47,8 @@ Feature: Administrative user directory
     And I am logged in as "pasajero@shareway.pe" with password "Secret123"
     When I list users
     Then the response status should be 403
+
+  Scenario: The directory requires authentication
+    Given I am not logged in
+    When I list users
+    Then the request should fail with status 401
