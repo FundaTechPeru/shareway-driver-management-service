@@ -52,6 +52,8 @@ public class SecurityConfig {
                         .accessDeniedHandler(securityErrorHandler))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
+                        // Admin-only directory. Exact path, so "/api/v1/users/me" (self profile) is untouched.
+                        .requestMatchers("/api/v1/users").hasRole(Role.ADMIN.name())
                         .requestMatchers("/api/v1/driver-documents/**").hasRole(Role.ADMIN.name())
                         .requestMatchers("/api/v1/drivers/me/**").hasRole(Role.DRIVER.name())
                         .requestMatchers("/api/v1/drivers/*/vehicle").hasRole(Role.ADMIN.name())
