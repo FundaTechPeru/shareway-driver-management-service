@@ -97,6 +97,7 @@ that is not a UUID returns `400`.
 | GET | `/api/v1/drivers/me/vehicles` | DRIVER | List my vehicles |
 | GET | `/api/v1/drivers/me/vehicles/{id}` | DRIVER | One of my vehicles (`404` if not mine) |
 | PUT | `/api/v1/drivers/me/vehicles/{id}` | DRIVER | Update one of my vehicles (`404` if not mine, `409` plate taken) |
+| GET | `/api/v1/drivers/{id}/vehicle` | ADMIN | Current vehicle of a driver (`404` if the driver has none) |
 | PUT | `/api/v1/drivers/me/availability` | DRIVER | Replace my weekly availability |
 | GET | `/api/v1/drivers/me/availability` | DRIVER | My weekly availability, ordered by day and start time |
 

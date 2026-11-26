@@ -33,6 +33,21 @@ public class VehicleService {
         return vehicleRepository.findAllByDriverId(driverId);
     }
 
+    /**
+     * The current vehicle of a driver, for the administration panel's trip records (US-36).
+     * A driver may register more than one vehicle; the first is enough for now.
+     *
+     * TODO: this returns the driver's CURRENT vehicle, not necessarily the one used on a past trip.
+     * Trip Execution does not store a vehicleId per trip yet, so this is an approximation until that
+     * is resolved on the Trip Execution side (not this service's concern).
+     */
+    @Transactional(readOnly = true)
+    public Vehicle getCurrentVehicleForDriver(UUID driverId) {
+        return vehicleRepository.findAllByDriverId(driverId).stream()
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("The driver has no registered vehicle"));
+    }
+
     @Transactional(readOnly = true)
     public Vehicle getForDriver(UUID driverId, UUID vehicleId) {
         return vehicleRepository.findByIdAndDriverId(vehicleId, driverId)

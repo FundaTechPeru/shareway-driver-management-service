@@ -54,6 +54,7 @@ public class SecurityConfig {
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers("/api/v1/driver-documents/**").hasRole(Role.ADMIN.name())
                         .requestMatchers("/api/v1/drivers/me/**").hasRole(Role.DRIVER.name())
+                        .requestMatchers("/api/v1/drivers/*/vehicle").hasRole(Role.ADMIN.name())
                         .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtService, userDetailsService),
                         UsernamePasswordAuthenticationFilter.class)
