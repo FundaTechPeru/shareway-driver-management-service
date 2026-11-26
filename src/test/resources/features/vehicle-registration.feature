@@ -78,6 +78,31 @@ Feature: Vehicle registration
     When I update the vehicle with plate "MAR-001" to color "Black" and 4 seats
     Then the request should fail with status 404
 
+  Scenario: An administrator looks up the current vehicle of a driver
+    Given I have registered a vehicle with plate "ABC-123"
+    And I am logged in as an administrator
+    When I look up the vehicle of the driver "carlos.diaz@upc.edu.pe"
+    Then the response status should be 200
+    And the response field "plate" should be "ABC-123"
+
+  Scenario: Not found when the driver has no vehicle
+    Given a driver is registered with email "maria.lopez@upc.edu.pe" and license number "Q1234567"
+    And I am logged in as an administrator
+    When I look up the vehicle of the driver "maria.lopez@upc.edu.pe"
+    Then the request should fail with status 404
+
+  Scenario: A driver cannot use the admin endpoint to see another driver's vehicle
+    Given a driver "maria.lopez@upc.edu.pe" has registered a vehicle with plate "MAR-001"
+    And I am logged in as "carlos.diaz@upc.edu.pe" with password "Secret123"
+    When I look up the vehicle of the driver "maria.lopez@upc.edu.pe"
+    Then the request should fail with status 403
+
+  Scenario: The admin vehicle lookup requires authentication
+    Given a driver "maria.lopez@upc.edu.pe" has registered a vehicle with plate "MAR-001"
+    And I am not logged in
+    When I look up the vehicle of the driver "maria.lopez@upc.edu.pe"
+    Then the request should fail with status 401
+
   Scenario: Reject vehicle registration from passengers
     Given I am logged in as a passenger with email "ana.torres@upc.edu.pe"
     When I register a vehicle with plate "ABC-123", brand "Toyota", model "Yaris", year 2020, color "Red" and 4 seats

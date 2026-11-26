@@ -99,6 +99,25 @@ public class DocumentSteps {
         context.getRequest(DOCUMENTS_PATH);
     }
 
+    @When("I list the documents with status {string}")
+    public void iListTheDocumentsWithStatus(String status) {
+        context.getRequest("/api/v1/driver-documents?status=" + status);
+    }
+
+    @Then("the document queue should include a document submitted by {string}")
+    public void theDocumentQueueShouldIncludeADocumentSubmittedBy(String email) {
+        java.util.List<String> emails = context.read("$[*].driver.email");
+        assertThat(emails).contains(email);
+    }
+
+    @Then("every document in the queue should carry its driver's name and email")
+    public void everyDocumentInTheQueueShouldCarryItsDriverNameAndEmail() {
+        java.util.List<String> names = context.read("$[*].driver.fullName");
+        java.util.List<String> emails = context.read("$[*].driver.email");
+        assertThat(names).isNotEmpty().allSatisfy(name -> assertThat(name).isNotBlank());
+        assertThat(emails).isNotEmpty().allSatisfy(mail -> assertThat(mail).isNotBlank());
+    }
+
     @When("I view my {string} document")
     public void iViewMyDocument(String type) {
         context.getRequest(DOCUMENTS_PATH + "/" + context.recallId(documentKey(context.currentEmail(), type)));

@@ -7,12 +7,17 @@ import java.util.UUID;
 import com.fundatech.shareway.drivermanagement.application.DocumentUpload;
 import com.fundatech.shareway.drivermanagement.application.DriverDocumentService;
 import com.fundatech.shareway.drivermanagement.application.DriverVerificationService;
+import com.fundatech.shareway.drivermanagement.domain.model.DocumentStatus;
 import com.fundatech.shareway.drivermanagement.domain.model.DocumentType;
 import com.fundatech.shareway.drivermanagement.infrastructure.security.AuthenticatedUser;
+import com.fundatech.shareway.drivermanagement.interfaces.rest.dto.AdminDriverDocumentResponse;
 import com.fundatech.shareway.drivermanagement.interfaces.rest.dto.DocumentResponse;
 import com.fundatech.shareway.drivermanagement.interfaces.rest.dto.ReviewDocumentRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -68,10 +73,35 @@ public class DriverDocumentController {
         return DocumentResponse.from(driverDocumentService.getForDriver(principal.id(), id));
     }
 
+    @GetMapping("/driver-documents")
+    @Operation(summary = "List driver documents by status",
+            description = "Administrators only. Without a status it returns every document; with one "
+                    + "(e.g. PENDING) only those in that status. Each row carries the driver that submitted it.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "The queue of driver documents"),
+            @ApiResponse(responseCode = "400", description = "Invalid status value", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid token", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "The caller is not an administrator", content = @Content())
+    })
+    public List<AdminDriverDocumentResponse> listByStatus(
+            @RequestParam(name = "status", required = false) DocumentStatus status) {
+        return driverDocumentService.listByStatus(status).stream()
+                .map(AdminDriverDocumentResponse::from)
+                .toList();
+    }
+
     @PatchMapping("/driver-documents/{id}/review")
     @Operation(summary = "Review a driver document",
             description = "Administrators only. A reason is required to reject. Approving DRIVERS_LICENSE, NATIONAL_ID "
                     + "and CRIMINAL_RECORD verifies the driver.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "The updated document"),
+            @ApiResponse(responseCode = "400", description = "Missing decision or reason", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid token", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "The caller is not an administrator", content = @Content()),
+            @ApiResponse(responseCode = "404", description = "The document does not exist", content = @Content()),
+            @ApiResponse(responseCode = "409", description = "The document was already reviewed", content = @Content())
+    })
     public DocumentResponse review(@Parameter(hidden = true) @AuthenticationPrincipal AuthenticatedUser principal,
                                    @PathVariable UUID id,
                                    @Valid @RequestBody ReviewDocumentRequest request) {
